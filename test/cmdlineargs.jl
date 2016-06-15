@@ -275,6 +275,18 @@ let exename = `$(Base.julia_cmd()) --precompiled=yes`
             @test success(`$exename -e "exit(0)"`)
         end
     end
+
+    # --polly
+    let JL_OPTIONS_POLLY_DEFAULT = 0,
+        JL_OPTIONS_POLLY_ON = 1,
+        JL_OPTIONS_POLLY_OFF = 2
+        @test parse(Int,readchomp(`$exename -E "Int(Base.JLOptions().polly)"`)) == JL_OPTIONS_POLLY_DEFAULT
+        @test parse(Int,readchomp(`$exename -E "Int(Base.JLOptions().polly)" --polly=yes`)) == JL_OPTIONS_POLLY_ON
+        @test parse(Int,readchomp(`$exename -E "Int(Base.JLOptions().polly)" --polly=no`)) == JL_OPTIONS_POLLY_OFF
+    end
+    # --polly takes yes/no as argument
+    @test !success(`$exename -E "exit(0)" --polly=false`)
+
 end
 
 # Make sure `julia --lisp` doesn't break

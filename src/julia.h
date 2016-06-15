@@ -1679,6 +1679,7 @@ typedef struct {
     const char *outputji;
     int8_t incremental;
     int8_t image_file_specified;
+    int8_t polly;
 } jl_options_t;
 
 extern JL_DLLEXPORT jl_options_t jl_options;
@@ -1734,6 +1735,10 @@ JL_DLLEXPORT int jl_generating_output(void);
 
 #define JL_OPTIONS_USE_COMPILECACHE_YES 1
 #define JL_OPTIONS_USE_COMPILECACHE_NO 0
+
+#define JL_OPTIONS_POLLY_DEFAULT 0
+#define JL_OPTIONS_POLLY_ON 1
+#define JL_OPTIONS_POLLY_OFF 2
 
 // Version information
 #include <julia_version.h>

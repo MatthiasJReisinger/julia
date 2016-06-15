@@ -47,6 +47,9 @@ static const char opts[]  =
     " --inline={yes|no}         Control whether inlining is permitted (overrides functions declared as @inline)\n"
     " --check-bounds={yes|no}   Emit bounds checks always or never (ignoring declarations)\n"
     " --math-mode={ieee,fast}   Disallow or enable unsafe floating point optimizations (overrides @fastmath declaration)\n\n"
+#ifdef USE_POLLY
+    " --polly={yes|no}          Apply Polly always or never (ignoring @polly declarations)\n"
+#endif
 
     // error and warning options
     " --depwarn={yes|no|error}  Enable or disable syntax and method deprecation warnings (\"error\" turns warnings into errors)\n\n"
@@ -91,7 +94,8 @@ JL_DLLEXPORT void jl_parse_opts(int *argcp, char ***argvp)
            opt_output_ji,
            opt_use_precompiled,
            opt_use_compilecache,
-           opt_incremental
+           opt_incremental,
+           opt_polly
     };
     static const char* const shortopts = "+vhqFfH:e:E:P:L:J:C:ip:O:";
     static const struct option longopts[] = {
@@ -127,6 +131,7 @@ JL_DLLEXPORT void jl_parse_opts(int *argcp, char ***argvp)
         { "inline",          required_argument, 0, opt_inline },
         { "math-mode",       required_argument, 0, opt_math_mode },
         { "handle-signals",  required_argument, 0, opt_handle_signals },
+        { "polly",           required_argument, 0, opt_polly },
         // hidden command line options
         { "worker",          required_argument, 0, opt_worker },
         { "bind-to",         required_argument, 0, opt_bind_to },
@@ -422,6 +427,14 @@ restart_switch:
             else
                 jl_errorf("julia: invalid argument to --handle-signals (%s)", optarg);
             break;
+       case opt_polly:
+             if (!strcmp(optarg,"yes"))
+                 jl_options.polly = JL_OPTIONS_POLLY_ON;
+             else if (!strcmp(optarg,"no"))
+                 jl_options.polly = JL_OPTIONS_POLLY_OFF;
+             else
+                 jl_errorf("julia: invalid argument to --polly={yes|no} (%s)", optarg);
+             break;
         default:
             jl_errorf("julia: unhandled option -- %c\n"
                       "This is a bug, please report it.", c);
