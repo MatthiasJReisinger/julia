@@ -77,8 +77,9 @@ end
 UnitRange{T<:Real}(start::T, stop::T) = UnitRange{T}(start, stop)
 
 unitrange_last(::Bool, stop::Bool) = stop
-unitrange_last{T<:Integer}(start::T, stop::T) =
-    ifelse(stop >= start, stop, convert(T,start-one(stop-start)))
+unitrange_last{T<:Integer}(start::T, stop::T) = stop
+#unitrange_last{T<:Integer}(start::T, stop::T) =
+#    ifelse(stop >= start, stop, convert(T,start-one(stop-start)))
 unitrange_last{T}(start::T, stop::T) =
     ifelse(stop >= start, convert(T,start+floor(stop-start)),
                           convert(T,start-one(stop-start)))
@@ -426,8 +427,10 @@ done{T,S}(r::StepRange{T,S}, i::Integer) =
 start{T}(r::UnitRange{T}) = oftype(r.start + one(T), r.start)
 next{T}(r::AbstractUnitRange{T}, i) = (convert(T, i), i + one(T))
 done{T}(r::AbstractUnitRange{T}, i) = i == oftype(i, r.stop) + one(T)
+done{T<:Integer}(r::UnitRange{T}, i) = (i > oftype(i,r.stop)) | (i < oftype(i,r.start))
 
 start{T}(r::OneTo{T}) = one(T)
+
 
 # some special cases to favor default Int type to avoid overflow
 let smallint = (Int === Int64 ?
