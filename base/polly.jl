@@ -11,8 +11,9 @@ Tells the compiler to apply the polyhedral optimizer Polly to the given function
 """
 macro polly(func)
     (isa(func, Expr) && func.head == :function) || throw(PollyError("function definition expected"))
-    esc(Base.pushmeta!(canonicalize!(func), :polly))
-#    esc(Base.pushmeta!(func, :polly))
+    if Base.JLOptions().polly != 0
+        esc(Base.pushmeta!(canonicalize!(func), :polly))
+    end
 end
 
 # Error thrown from ill-formed uses of `@polly`
