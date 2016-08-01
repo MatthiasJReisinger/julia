@@ -107,10 +107,6 @@ include("float16.jl")
 include("simdloop.jl")
 importall .SimdLoop
 
-# Polly polyhedral optimizer
-include("polly.jl")
-importall .Polly
-
 # map-reduce operators
 include("reduce.jl")
 
@@ -135,6 +131,12 @@ include(String(vcat(length(Core.ARGS)>=2?Core.ARGS[2].data:"".data, "version_git
 include("osutils.jl")
 include("c.jl")
 include("sysinfo.jl")
+
+# Polly polyhedral optimizer
+if USE_POLLY
+    include("polly.jl")
+    importall .Polly
+end
 
 if !isdefined(Core, :Inference)
     include("docs/core.jl")

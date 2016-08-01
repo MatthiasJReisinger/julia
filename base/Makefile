@@ -56,6 +56,11 @@ ifeq ($(USE_GPL_LIBS), 1)
 else
 	@echo "const USE_GPL_LIBS = false" >> $@
 endif
+ifeq ($(USE_POLLY), 1)
+	@echo "const USE_POLLY = true" >> $@
+else
+	@echo "const USE_POLLY = false" >> $@
+endif
 	@echo "const libfftw_name = \"$(LIBFFTWNAME)\"" >> $@
 	@echo "const libfftwf_name = \"$(LIBFFTWFNAME)\"" >> $@
 	@echo "const libllvm_version = \"$$($(LLVM_CONFIG_HOST) --version)\"" >> $@
