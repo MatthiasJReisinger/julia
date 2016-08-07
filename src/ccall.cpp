@@ -684,6 +684,7 @@ public:
         LazyFunctions(0)
     {
     }
+    virtual ~FunctionMover() {}
     ValueToValueMapTy VMap;
     llvm::Module *destModule;
     llvm::Module *srcModule;
