@@ -13,7 +13,9 @@ Tells the compiler to apply the polyhedral optimizer Polly to a function.
 """
 macro polly(func)
     (isa(func, Expr) && func.head == :function) || throw(ArgumentError("@polly can only be applied to functions"))
-    canonicalize!(func)
+    if (Base.JLOptions().polly == 1)
+        canonicalize!(func)
+    end
     return esc(Base.pushmeta!(func, :polly))
 end
 
