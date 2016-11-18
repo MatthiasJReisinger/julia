@@ -43,7 +43,9 @@ namespace llvm {
     extern Pass *createLowerSimdLoopPass();
 }
 
+#if JL_LLVM_VERSION < 40000
 #include <llvm/Bitcode/ReaderWriter.h>
+#endif
 #if JL_LLVM_VERSION >= 30500
 #include <llvm/Bitcode/BitcodeWriterPass.h>
 #endif
