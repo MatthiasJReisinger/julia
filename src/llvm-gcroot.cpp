@@ -23,6 +23,9 @@
 #include <llvm/IR/DebugInfoMetadata.h>
 #endif
 #include <llvm/IR/MDBuilder.h>
+#if JL_LLVM_VERSION >= 40000
+#include <llvm/IR/AutoUpgrade.h>
+#endif
 
 #include <vector>
 #include <queue>
@@ -1183,6 +1186,10 @@ bool LowerGCFrame::runOnModule(Module &M)
     MDBuilder mbuilder(M.getContext());
     MDNode *tbaa_root = mbuilder.createTBAARoot("jtbaa");
     MDNode *tbaa_gcframe = tbaa_make_child("jtbaa_gcframe", tbaa_root);
+#if JL_LLVM_VERSION >= 40000
+    tbaa_root = llvm::UpgradeTBAANode(*tbaa_root);
+    tbaa_gcframe = llvm::UpgradeTBAANode(*tbaa_gcframe);
+#endif
 
     Function *ptls_getter = M.getFunction("jl_get_ptls_states");
     ensure_enter_function(M);

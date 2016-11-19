@@ -29,6 +29,10 @@
 #  include <llvm/IR/InlineAsm.h>
 #endif
 
+#if JL_LLVM_VERSION >= 40000
+#include <llvm/IR/AutoUpgrade.h>
+#endif
+
 using namespace llvm;
 
 extern MDNode *tbaa_make_child(const char *name, MDNode *parent, bool isConstant=false);

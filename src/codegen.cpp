@@ -101,6 +101,10 @@
 #include <polly/ScopDetection.h>
 #endif
 
+#if JL_LLVM_VERSION >= 40000
+#include <llvm/IR/AutoUpgrade.h>
+#endif
+
 using namespace llvm;
 namespace llvm {
     extern bool annotateSimdLoop(BasicBlock *latch);
@@ -5167,6 +5171,9 @@ static std::unique_ptr<Module> emit_function(jl_method_instance_t *lam, jl_code_
 MDNode *tbaa_make_child(const char *name, MDNode *parent, bool isConstant=false)
 {
     MDNode *n = mbuilder->createTBAANode(name,parent,isConstant);
+#if JL_LLVM_VERSION >= 40000
+    n = llvm::UpgradeTBAANode(*n);
+#endif
 #if JL_LLVM_VERSION < 30600
 #if JL_LLVM_VERSION >= 30500
     n->setValueName( ValueName::Create(name));
@@ -5280,6 +5287,9 @@ static void init_julia_llvm_meta(void)
 {
     mbuilder = new MDBuilder(jl_LLVMContext);
     MDNode *tbaa_root = mbuilder->createTBAARoot("jtbaa");
+#if JL_LLVM_VERSION >= 40000
+    tbaa_root = llvm::UpgradeTBAANode(*tbaa_root);
+#endif
     tbaa_gcframe = tbaa_make_child("jtbaa_gcframe", tbaa_root);
     tbaa_stack = tbaa_make_child("jtbaa_stack", tbaa_root);
     tbaa_data = tbaa_make_child("jtbaa_data", tbaa_root);
